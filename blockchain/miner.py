@@ -20,22 +20,19 @@ def proof_of_work(last_proof):
     - Use the same method to generate SHA-256 hashes as the examples in class
     - Note:  We are adding the hash of the last proof to a number/nonce for the new proof
     """
-
     start = timer()
 
     print("Searching for next proof")
     proof = 0
     #  TODO: Your code here
 
-    last_encoded = f'{proof}'.encode()
+    last_encoded = f'{last_proof}'.encode()
     last_hash = hashlib.sha256(last_encoded).hexdigest()
     while valid_proof(last_hash, proof) is False:
-        proof = random.randint(1,999999)
+        proof = random.randint(1,99999999999)
 
-    print("Proof found: " + str(proof) + " in " + str(timer() - start))
+    print("Proof found for: " + last_hash[-6:] + " " + str(proof) + " in " + str(timer() - start))
     return proof
-
-# hashlib.sha256(last_proof).hexdigest()
 
 def valid_proof(last_hash, proof):
     """
@@ -48,7 +45,7 @@ def valid_proof(last_hash, proof):
     # TODO: Your code here!
     guess_encoded = f'{proof}'.encode()
     guess_hash = hashlib.sha256(guess_encoded).hexdigest()
-    return guess_hash[:6] == last_hash[6:]
+    return guess_hash[:6] == last_hash[-6:]
 
 
 if __name__ == '__main__':
@@ -80,9 +77,3 @@ if __name__ == '__main__':
                      "id": id}
 
         r = requests.post(url=node + "/mine", json=post_data)
-        data = r.json()
-        if data.get('message') == 'New Block Forged':
-            coins_mined += 1
-            print("Total coins mined: " + str(coins_mined))
-        else:
-            print(data.get('message'))
